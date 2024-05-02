@@ -80,52 +80,145 @@ const Board = (() => {
 })();
 
 const Player = (function () {
-    let createdPlayers = 0;
-  
-    return function (name) {
-      name;
-      let token;
-      let score = 0;
-      if (createdPlayers === 0) {
-        token = "X";
-      } else if (createdPlayers === 1) {
-        token = "O";
-      }
-      createdPlayers = 1;
-  
-      const getName = () => {
-        return name;
-      };
-  
-      const getToken = () => {
-        return token;
-      };
-  
-      const getScore = () => {
-        return score;
-      };
-  
-      const updateScore = () => {
-        score++;
-      };
-  
-      const resetScore = () => {
-        score = 0;
-      };
-  
-      const playerWins = () => {
-        token++;
-      };
-  
-      return {
-        createdPlayers,
-        getName,
-        getToken,
-        getScore,
-        updateScore,
-        resetScore,
-        playerWins,
-      };
+  let createdPlayers = 0;
+
+  return function (name) {
+    name;
+    let token;
+    let score = 0;
+    if (createdPlayers === 0) {
+      token = "X";
+    } else if (createdPlayers === 1) {
+      token = "O";
+    }
+    createdPlayers = 1;
+
+    const getName = () => {
+      return name;
     };
-  })();
-  
+
+    const getToken = () => {
+      return token;
+    };
+
+    const getScore = () => {
+      return score;
+    };
+
+    const updateScore = () => {
+      score++;
+    };
+
+    const resetScore = () => {
+      score = 0;
+    };
+
+    const playerWins = () => {
+      token++;
+    };
+
+    return {
+      createdPlayers,
+      getName,
+      getToken,
+      getScore,
+      updateScore,
+      resetScore,
+      playerWins,
+    };
+  };
+})();
+
+const GameControl = (() => {
+  let activePlayer;
+  let inactivePlayer;
+  let player1Starts = true;
+  let scoreToWin = 3;
+  //   const player1 = Player("Mario");
+  //   const player2 = Player("Luigi");
+
+  const initializeNewRound = () => {
+    Board.resetBoard();
+    Player.createdPlayers = 0;
+    // createPlayers("Mario", "Luigi");
+    if (player1Starts === true) {
+      setActivePlayer(player1);
+    } else {
+      setActivePlayer(player2);
+    }
+    setInactivePlayer();
+  };
+
+  const setActivePlayer = (player) => {
+    activePlayer = player;
+  };
+
+  const getActivePlayer = () => {
+    return activePlayer;
+  };
+
+  const setInactivePlayer = () => {
+    if (activePlayer === player1) {
+      inactivePlayer = player2;
+    } else inactivePlayer = player1;
+  };
+
+  const getInactivePlayer = () => {
+    return inactivePlayer;
+  };
+
+  const changeWhoStarts = () => {
+    if (activePlayer === player1) {
+      player1Starts = false;
+    } else player1Starts = true;
+  };
+
+  const drawToken = (cellName) => {
+    Board.placeToken(activePlayer.getToken(), cellName);
+    if (Board.checkBoardForWin()) {
+      playerWon();
+    } else {
+      setActivePlayer(inactivePlayer);
+      setInactivePlayer();
+    }
+  };
+
+  const playerWon = () => {
+    changeWhoStarts();
+    activePlayer.updateScore();
+    if (activePlayer.getScore() === scoreToWin) {
+      gameOver();
+    } else {
+      console.log(activePlayer.getName(), " won this round");
+      initializeNewRound();
+    }
+  };
+
+  const gameOver = () => {
+    console.log(activePlayer.getName(), " won the game over ", inactivePlayer.getName());
+    //Display winner and looser on website
+    //Function with a button to start again by making players first, reset score, then initialize
+    activePlayer.resetScore();
+    inactivePlayer.resetScore();
+  };
+
+  const tieGame = () => {
+    console.log("Round tied");
+    //Display tie game message, then initialize
+    initializeNewRound();
+  };
+
+  return {
+    // player1,
+    // player2,
+    initializeNewRound,
+    getActivePlayer,
+    getInactivePlayer,
+    drawToken,
+    playerWon,
+    gameOver,
+    tieGame,
+  };
+})();
+
+// GameControl.initializeNewRound();
