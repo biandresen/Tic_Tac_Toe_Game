@@ -79,4 +79,53 @@ const Board = (() => {
   };
 })();
 
-
+const Player = (function () {
+    let createdPlayers = 0;
+  
+    return function (name) {
+      name;
+      let token;
+      let score = 0;
+      if (createdPlayers === 0) {
+        token = "X";
+      } else if (createdPlayers === 1) {
+        token = "O";
+      }
+      createdPlayers = 1;
+  
+      const getName = () => {
+        return name;
+      };
+  
+      const getToken = () => {
+        return token;
+      };
+  
+      const getScore = () => {
+        return score;
+      };
+  
+      const updateScore = () => {
+        score++;
+      };
+  
+      const resetScore = () => {
+        score = 0;
+      };
+  
+      const playerWins = () => {
+        token++;
+      };
+  
+      return {
+        createdPlayers,
+        getName,
+        getToken,
+        getScore,
+        updateScore,
+        resetScore,
+        playerWins,
+      };
+    };
+  })();
+  
