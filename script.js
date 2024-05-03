@@ -134,8 +134,6 @@ const GameControl = (() => {
   let inactivePlayer;
   let player1Starts = true;
   let scoreToWin = 3;
-  //   const player1 = Player("Mario");
-  //   const player2 = Player("Luigi");
 
   const initializeNewRound = () => {
     Board.resetBoard();
@@ -209,8 +207,6 @@ const GameControl = (() => {
   };
 
   return {
-    // player1,
-    // player2,
     initializeNewRound,
     getActivePlayer,
     getInactivePlayer,
@@ -218,6 +214,41 @@ const GameControl = (() => {
     playerWon,
     gameOver,
     tieGame,
+  };
+})();
+
+const UIControl = (() => {
+  //#region DOM-queries
+  const musicButton = document.querySelector("#music-button");
+  const marioThemeButton = document.querySelector("#mario-theme-button");
+  const messageArea = document.querySelector(".message-area");
+  const messageHeading = document.querySelector(".message-heading");
+  const messageButtonsArea = document.querySelector(".message-buttons-area");
+  const cellButtons = document.querySelectorAll(".board-button");
+  const infoBarHeading = document.querySelector(".info-bar-heading");
+  const infoBarStatusArea = document.querySelector(".info-bar-status-area");
+  const scoreGoalText = document.querySelector(".score-goal-text");
+  const scoreGoalNumber = document.querySelector(".score-goal-number");
+  const roundsPlayedText = document.querySelector(".rounds-played-text");
+  const roundsPlayedNumber = document.querySelector(".rounds-played-number");
+  const infoBarPlayer1Area = document.querySelector(".info-bar-player1-area");
+  const infoBarPlayer1Heading = document.querySelector(".info-bar-player1-heading");
+  const infoBarPlayer1Info = document.querySelector(".info-bar-player1-info");
+  const infoBarPlayer1Img = document.querySelector(".info-bar-player1-img");
+  const player1Img = document.querySelector("#player1-img");
+  const infoBarPlayer2Area = document.querySelector(".info-bar-player2-area");
+  const infoBarPlayer2Heading = document.querySelector(".info-bar-player2-heading");
+  const infoBarPlayer2Info = document.querySelector(".info-bar-player2-info");
+  const player2Img = document.querySelector("#player2-img");
+  const colorButton = document.querySelector(".color-theme-change-button");
+  const restartButton = document.querySelector("#restart-button");
+  //#endregion
+
+  const setUpNewGame = () => {};
+    
+  return {
+    setUpNewGame,
+    getHTMLelements,
   };
 })();
 
