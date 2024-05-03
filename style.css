@@ -181,3 +181,10 @@
   transform: scale(1.05);
   transition: ease-in-out 0.2s;
 }
+
+#music-button {
+  margin: 2vh;
+  font-size: 1.5rem;
+  justify-self: start;
+  align-self: start;
+}
