@@ -221,4 +221,6 @@ const GameControl = (() => {
   };
 })();
 
+// Make player1 and player2.   const player1 = Player("Mario"); etc.
 // GameControl.initializeNewRound();
+// GameControl.drawToken("r1c1");
