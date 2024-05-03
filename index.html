@@ -10,16 +10,50 @@
   <body>
     <div class="content">
       <div class="message-area">
-        <div class="message-heading"></div>
+        <div class="message-heading">Tic Tac Toe</div>
         <div class="message-buttons"></div>
       </div>
-      <div class="board-area"></div>
+      <div class="board-area">
+        <button class="board-button button1">X</button>
+        <button class="board-button button2">O</button>
+        <button class="board-button button3">X</button>
+        <button class="board-button button4">X</button>
+        <button class="board-button button5">O</button>
+        <button class="board-button button6">O</button>
+        <button class="board-button button7">X</button>
+        <button class="board-button button8">O</button>
+        <button class="board-button button9">X</button>
+      </div>
       <div class="info-bar-area">
-        <div class="info-bar-heading"></div>
-        <div class="info-bar-player1-area"></div>
-        <div class="info-bar-player2-area"></div>
-        <div class="info-bar-status-area"></div>
-        <div class="info-bar-button-area"></div>
+        <div class="info-bar-heading">Game in progress</div>
+        <div class="info-bar-status-area">
+          <div class="score-goal-text status">Best of:</div>
+          <div class="score-goal-number">5</div>
+          <div class="rounds-played-text status">Rounds played:</div>
+          <div class="rounds-played-number">4 / 5</div>
+        </div>
+        <div class="info-bar-player1-area">
+          <div class="info-bar-player1-heading player-heading">Player1</div>
+          <div class="info-bar-player1-info player-info">
+            Name: Mario<br />Token: X<br />Score: 1
+          </div>
+        </div>
+        <div class="info-bar-player1-img player-img">
+          <img src="./img/mario.png" alt="" />
+        </div>
+        <div class="info-bar-player2-area">
+          <div class="info-bar-player2-heading player-heading">Player2</div>
+          <div class="info-bar-player2-info player-info">
+            Name: Luigi<br />Token: O<br />Score: 0
+          </div>
+        </div>
+        <div class="info-bar-player2-img player-img">
+          <img src="./img/luigi.png" alt="" />
+        </div>
+        <div class="info-bar-button-area">
+          <button class="color-theme-change-button button">Change theme</button>
+          <button class="button" id="restart-button">RESTART</button>
+        </div>
       </div>
     </div>
   </body>

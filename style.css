@@ -1,8 +1,183 @@
-html {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  padding: 0;
   margin: 0;
   overflow-x: hidden;
+  font-family: monospace;
+  color: hsl(var(--hue), var(--saturation), 75%);
+}
+
+:root {
+  --hue: 0;
+  --saturation: 80%;
+  --foreground-color: hsl(var(--hue), var(--saturation), 75%);
+  --middleground-color: hsl(var(--hue), var(--saturation), 50%);
+  --background-color: hsl(var(--hue), var(--saturation), 20%);
+}
+
+.content {
   width: 100vw;
   height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1.3fr 1fr;
+  grid-template-rows: 1fr 3fr 0.3fr;
+  gap: 30px;
+  background-color: hsl(var(--hue), var(--saturation), 20%);
+}
+
+.message-area {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 0.35fr;
+}
+
+.message-heading {
+  grid-row: 1 / 2;
+  font-size: 4rem;
+  font-weight: 600;
+  margin-top: 30px;
+  justify-self: center;
+}
+
+.message-buttons {
+  grid-row: 2 / 3;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 5px;
+  justify-self: center;
+}
+
+.board-area {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  background-color: hsl(var(--hue), var(--saturation), 50%);
+  gap: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 50px hsl(var(--hue), var(--saturation), 50%);
+}
+
+.board-button {
+  background-color: hsl(var(--hue), var(--saturation), 20%);
+  border-style: none;
+  font-size: 10rem;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.board-button:hover {
+  cursor: pointer;
+  background-color: hsl(var(--hue), var(--saturation), 30%);
+}
+
+.info-bar-area {
+  grid-column: 3 / 4;
+  grid-row: 1 / 4;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 0.7fr 0.5fr 1.5fr 1.5fr 1fr;
+  gap: 5px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px hsl(var(--hue), var(--saturation), 50%);
+  background-color: hsl(var(--hue), var(--saturation), 20%);
+}
+
+.info-bar-heading {
+  grid-column: 1 / 3;
+  grid-row: 1 / 2;
+  font-size: 4rem;
+  font-weight: 600;
+  margin-top: 5px;
+  justify-self: center;
+  align-self: center;
+}
+
+.info-bar-status-area {
+  grid-column: 1 / 3;
+  grid-row: 2 / 3;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.score-goal-number,
+.rounds-played-number {
+  grid-column: 2 / 3;
+  padding-left: 20px;
+}
+
+.info-bar-player1-area {
+  grid-row: 3 / 4;
+  align-self: center;
+}
+
+.info-bar-player2-area {
+  grid-row: 4 / 5;
+  align-self: center;
+}
+
+.info-bar-player1-img {
+  grid-column: 2 / 3;
+  grid-row: 3 / 4;
+  display: flex;
+}
+
+.info-bar-player2-img {
+  grid-column: 2 / 3;
+  grid-row: 4 / 5;
+  display: flex;
+}
+
+.player-img {
+  height: 70%;
+  width: 70%;
+  justify-self: center;
+  align-self: center;
+}
+
+.player-heading {
+  font-size: 3rem;
+  font-weight: 600;
+  margin-top: 5px;
+  padding-left: 40px;
+  justify-self: start;
+  text-decoration: underline;
+}
+
+.player-info,
+.info-bar-status-area {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-top: 5px;
+  padding-left: 40px;
+  justify-self: start;
+}
+
+.info-bar-button-area {
+  grid-column: 1 / 3;
+  grid-row: 5 / 6;
+  display: flex;
+}
+
+.button {
+  font-size: 2.5rem;
+  padding: 10px;
+  font-weight: 600;
+  margin-left: 40px;
+  align-self: center;
+  background-color: hsl(var(--hue), var(--saturation), 20%);
+  border: 4px solid hsl(var(--hue), var(--saturation), 50%);
+  box-shadow: 0px 0px 20px hsl(var(--hue), var(--saturation), 50%);
+  border-radius: 10px;
+  transition: ease-in-out 0.2s;
+}
+
+.button:hover {
+  cursor: pointer;
+  background-color: hsl(var(--hue), var(--saturation), 30%);
+  transform: scale(1.05);
+  transition: ease-in-out 0.2s;
 }
