@@ -138,7 +138,6 @@ const GameControl = (() => {
   const initializeNewRound = () => {
     Board.resetBoard();
     Player.createdPlayers = 0;
-    // createPlayers("Mario", "Luigi");
     if (player1Starts === true) {
       setActivePlayer(player1);
     } else {
@@ -219,6 +218,7 @@ const GameControl = (() => {
 
 const UIControl = (() => {
   //#region DOM-queries
+  const board = document.querySelector(".board-area");
   const musicButton = document.querySelector("#music-button");
   const marioThemeButton = document.querySelector("#mario-theme-button");
   const messageArea = document.querySelector(".message-area");
@@ -226,6 +226,7 @@ const UIControl = (() => {
   const messageParagraph = document.querySelector(".message-paragraph");
   const messageButtonsArea = document.querySelector(".message-buttons-area");
   const cellButtons = document.querySelectorAll(".board-button");
+  const playButton = document.querySelector("#play-button");
   const infoBarHeading = document.querySelector(".info-bar-heading");
   const infoBarParagraphArea = document.querySelector(".info-bar-paragraph-area");
   const infoBarParagraph = document.querySelector(".info-bar-paragraph");
@@ -251,13 +252,17 @@ const UIControl = (() => {
   const bowserImg = document.createElement("img");
   //#endregion
 
+  let player1Chosen = false;
+
   const setUpNewGame = () => {
+    board.style.display = "none";
+    playButton.style.display = "none";
     messageHeading.textContent = "WELCOME!";
     messageParagraph.textContent = "Tic Tac Toe";
     restartButton.style.display = "none";
     infoBarHeading.textContent = "New Game";
     infoBarParagraph.textContent = "Select your player";
-    scoreGoalText.textContent = "Player1:";
+    scoreGoalText.textContent = "Player1: ";
     roundsPlayedText.textContent = "Player2: ";
     marioImg.src = "./img/mario.png";
     luigiImg.src = "./img/luigi.png";
@@ -267,10 +272,47 @@ const UIControl = (() => {
     luigiImg.classList = "luigi-img character-img";
     peachImg.classList = "peach-img character-img";
     bowserImg.classList = "bowser-img character-img";
+    marioImg.setAttribute("alt", "Mario");
+    luigiImg.setAttribute("alt", "Mario");
+    peachImg.setAttribute("alt", "Mario");
+    bowserImg.setAttribute("alt", "Mario");
     infoBarPlayer1Heading.appendChild(marioImg);
     infoBarPlayer2Heading.appendChild(luigiImg);
     infoBarPlayer1Img.appendChild(peachImg);
     infoBarPlayer2Img.appendChild(bowserImg);
+
+    marioImg.addEventListener("click", () => {
+      playerSelected("Mario");
+    });
+    luigiImg.addEventListener("click", () => {
+      playerSelected("Luigi");
+    });
+    peachImg.addEventListener("click", () => {
+      playerSelected("Peach");
+    });
+    bowserImg.addEventListener("click", () => {
+      playerSelected("Bowser");
+    });
+  };
+
+  const playerSelected = (character) => {
+    if (player1Chosen === false) {
+      const player1 = Player(character);
+      scoreGoalText.textContent += player1.getName();
+    } else if (player1Chosen === true) {
+      const player2 = Player(character);
+      roundsPlayedText.textContent += player2.getName();
+      marioImg.style.display = "none";
+      luigiImg.style.display = "none";
+      peachImg.style.display = "none";
+      bowserImg.style.display = "none";
+      displayPlayButton();
+    }
+    player1Chosen = true;
+  };
+
+  const displayPlayButton = () => {
+    playButton.style.display = "";
   };
 
   return {

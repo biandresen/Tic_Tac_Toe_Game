@@ -251,3 +251,10 @@
   justify-self: start;
   align-self: start;
 }
+
+#play-button{
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  height: 50%;
+  font-size: 1000%;
+}
