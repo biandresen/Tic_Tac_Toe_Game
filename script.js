@@ -223,10 +223,12 @@ const UIControl = (() => {
   const marioThemeButton = document.querySelector("#mario-theme-button");
   const messageArea = document.querySelector(".message-area");
   const messageHeading = document.querySelector(".message-heading");
+  const messageParagraph = document.querySelector(".message-paragraph");
   const messageButtonsArea = document.querySelector(".message-buttons-area");
   const cellButtons = document.querySelectorAll(".board-button");
   const infoBarHeading = document.querySelector(".info-bar-heading");
-  const infoBarStatusArea = document.querySelector(".info-bar-status-area");
+  const infoBarParagraphArea = document.querySelector(".info-bar-paragraph-area");
+  const infoBarParagraph = document.querySelector(".info-bar-paragraph");
   const scoreGoalText = document.querySelector(".score-goal-text");
   const scoreGoalNumber = document.querySelector(".score-goal-number");
   const roundsPlayedText = document.querySelector(".rounds-played-text");
@@ -239,18 +241,44 @@ const UIControl = (() => {
   const infoBarPlayer2Area = document.querySelector(".info-bar-player2-area");
   const infoBarPlayer2Heading = document.querySelector(".info-bar-player2-heading");
   const infoBarPlayer2Info = document.querySelector(".info-bar-player2-info");
+  const infoBarPlayer2Img = document.querySelector(".info-bar-player2-img");
   const player2Img = document.querySelector("#player2-img");
   const colorButton = document.querySelector(".color-theme-change-button");
   const restartButton = document.querySelector("#restart-button");
+  const marioImg = document.createElement("img");
+  const luigiImg = document.createElement("img");
+  const peachImg = document.createElement("img");
+  const bowserImg = document.createElement("img");
   //#endregion
 
-  const setUpNewGame = () => {};
-    
+  const setUpNewGame = () => {
+    messageHeading.textContent = "WELCOME!";
+    messageParagraph.textContent = "Tic Tac Toe";
+    restartButton.style.display = "none";
+    infoBarHeading.textContent = "New Game";
+    infoBarParagraph.textContent = "Select your player";
+    scoreGoalText.textContent = "Player1:";
+    roundsPlayedText.textContent = "Player2: ";
+    marioImg.src = "./img/mario.png";
+    luigiImg.src = "./img/luigi.png";
+    peachImg.src = "./img/peach.png";
+    bowserImg.src = "./img/bowser.png";
+    marioImg.classList = "mario-img character-img";
+    luigiImg.classList = "luigi-img character-img";
+    peachImg.classList = "peach-img character-img";
+    bowserImg.classList = "bowser-img character-img";
+    infoBarPlayer1Heading.appendChild(marioImg);
+    infoBarPlayer2Heading.appendChild(luigiImg);
+    infoBarPlayer1Img.appendChild(peachImg);
+    infoBarPlayer2Img.appendChild(bowserImg);
+  };
+
   return {
     setUpNewGame,
-    getHTMLelements,
   };
 })();
+
+UIControl.setUpNewGame();
 
 // Make player1 and player2.   const player1 = Player("Mario"); etc.
 // GameControl.initializeNewRound();
