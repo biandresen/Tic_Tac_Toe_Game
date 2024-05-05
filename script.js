@@ -133,9 +133,11 @@ const GameControl = (() => {
   let activePlayer;
   let inactivePlayer;
   let player1Starts = true;
-  let scoreToWin = 3;
+  let scoreToWin;
+  let roundsPlayed = 0;
 
   const initializeNewRound = () => {
+    roundsPlayed++;
     Board.resetBoard();
     Player.createdPlayers = 0;
     if (player1Starts === true) {
@@ -206,6 +208,8 @@ const GameControl = (() => {
   };
 
   return {
+    scoreToWin,
+    roundsPlayed,
     initializeNewRound,
     getActivePlayer,
     getInactivePlayer,
@@ -226,7 +230,12 @@ const UIControl = (() => {
   const messageParagraph = document.querySelector(".message-paragraph");
   const messageButtonsArea = document.querySelector(".message-buttons-area");
   const cellButtons = document.querySelectorAll(".board-button");
+  const battlingCharacters = document.querySelector(".battling-characters");
+  const gameTypeButtonArea = document.querySelector(".game-type-button-area");
+  const gameTypeButtons = document.querySelectorAll(".game-type-button");
+  const selectPlayerButton = document.querySelector("#select-player-button");
   const playButton = document.querySelector("#play-button");
+  const infoBarArea = document.querySelector(".info-bar-area");
   const infoBarHeading = document.querySelector(".info-bar-heading");
   const infoBarParagraphArea = document.querySelector(".info-bar-paragraph-area");
   const infoBarParagraph = document.querySelector(".info-bar-paragraph");
@@ -253,13 +262,18 @@ const UIControl = (() => {
   //#endregion
 
   let player1Chosen = false;
+  let player1;
+  let player2;
+  const characters = [marioImg, luigiImg, peachImg, bowserImg];
 
-  const setUpNewGame = () => {
+  const displayWelcomeMessage = () => {
     board.style.display = "none";
+    infoBarArea.style.display = "none";
+    gameTypeButtonArea.style.display = "none";
     playButton.style.display = "none";
+    restartButton.style.display = "none";
     messageHeading.textContent = "WELCOME!";
     messageParagraph.textContent = "Tic Tac Toe";
-    restartButton.style.display = "none";
     infoBarHeading.textContent = "New Game";
     infoBarParagraph.textContent = "Select your player";
     scoreGoalText.textContent = "Player1: ";
@@ -273,54 +287,140 @@ const UIControl = (() => {
     peachImg.classList = "peach-img character-img";
     bowserImg.classList = "bowser-img character-img";
     marioImg.setAttribute("alt", "Mario");
-    luigiImg.setAttribute("alt", "Mario");
-    peachImg.setAttribute("alt", "Mario");
-    bowserImg.setAttribute("alt", "Mario");
+    luigiImg.setAttribute("alt", "Luigi");
+    peachImg.setAttribute("alt", "Peach");
+    bowserImg.setAttribute("alt", "Bowser");
     infoBarPlayer1Heading.appendChild(marioImg);
     infoBarPlayer2Heading.appendChild(luigiImg);
     infoBarPlayer1Img.appendChild(peachImg);
     infoBarPlayer2Img.appendChild(bowserImg);
 
-    marioImg.addEventListener("click", () => {
-      playerSelected("Mario");
-    });
-    luigiImg.addEventListener("click", () => {
-      playerSelected("Luigi");
-    });
-    peachImg.addEventListener("click", () => {
-      playerSelected("Peach");
-    });
-    bowserImg.addEventListener("click", () => {
-      playerSelected("Bowser");
+    selectPlayerButton.addEventListener("click", () => {
+      selectYourPlayer();
     });
   };
 
-  const playerSelected = (character) => {
+  const selectYourPlayer = () => {
+    selectPlayerButton.style.display = "none";
+    infoBarArea.style.display = "";
+    enableCharacterEventListeners();
+  };
+
+  const enableCharacterEventListeners = () => {
+    marioImg.addEventListener("click", handleCharacterClickEvent.bind(null, "Mario"), {
+      once: true,
+    });
+    luigiImg.addEventListener("click", handleCharacterClickEvent.bind(null, "Luigi"), {
+      once: true,
+    });
+    peachImg.addEventListener("click", handleCharacterClickEvent.bind(null, "Peach"), {
+      once: true,
+    });
+    bowserImg.addEventListener("click", handleCharacterClickEvent.bind(null, "Bowser"), {
+      once: true,
+    });
+  };
+
+  function handleCharacterClickEvent(name) {
+    playerSelected(name);
+  }
+
+  const playerSelected = (chosenCharacter) => {
     if (player1Chosen === false) {
-      const player1 = Player(character);
+      player1 = Player(chosenCharacter);
       scoreGoalText.textContent += player1.getName();
+      removeSelectedCharacter(chosenCharacter);
     } else if (player1Chosen === true) {
-      const player2 = Player(character);
+      player2 = Player(chosenCharacter);
       roundsPlayedText.textContent += player2.getName();
-      marioImg.style.display = "none";
-      luigiImg.style.display = "none";
-      peachImg.style.display = "none";
-      bowserImg.style.display = "none";
-      displayPlayButton();
+      removeCharacters();
+      chooseGameType();
     }
     player1Chosen = true;
   };
 
+  const removeSelectedCharacter = (chosenCharacter) => {
+    for (i = 0; i < characters.length; i++) {
+      if (characters[i].getAttribute("alt") === chosenCharacter) {
+        characters[i].style.display = "none";
+      }
+    }
+  };
+
+  const removeCharacters = () => {
+    for (i = 0; i < characters.length; i++) {
+      characters[i].style.display = "none";
+    }
+  };
+
+  const chooseGameType = () => {
+    gameTypeButtonArea.style.display = "";
+    messageHeading.textContent = "";
+    messageParagraph.textContent = "Choose game type ";
+    infoBarHeading.textContent = "Players:";
+    infoBarParagraph.textContent = "";
+    gameTypeButtons.forEach((button) => {
+      button.addEventListener("click", (e) => {
+        GameControl.scoreToWin = e.target.getAttribute("data-number");
+        gameTypeButtonArea.style.display = "none";
+        displayPlayButton();
+      });
+    });
+  };
+
   const displayPlayButton = () => {
+    messageParagraph.textContent = "Ready to play?";
     playButton.style.display = "";
+    playButton.addEventListener("click", () => {
+      setUpGame();
+    });
+  };
+
+  const setUpGame = () => {
+    playButton.style.display = "none";
+    board.style.display = "";
+    messageParagraph.textContent = "Tic Tac Toe";
+    restartButton.style.display = "none";
+    infoBarHeading.textContent = "Game in progress";
+    scoreGoalText.textContent = "First to: " + GameControl.scoreToWin + " points";
+    roundsPlayedText.textContent = "Rounds played: " + GameControl.roundsPlayed;
+    infoBarPlayer1Heading.textContent = "Player1";
+    infoBarPlayer1Info.innerHTML =
+      "Name: " +
+      player1.getName() +
+      "<br>Token: " +
+      player1.getToken() +
+      "<br>Score: " +
+      player1.getScore();
+    infoBarPlayer2Heading.textContent = "Player2";
+    infoBarPlayer2Info.innerHTML =
+      "Name: " +
+      player2.getName() +
+      "<br>Token: " +
+      player2.getToken() +
+      "<br>Score: " +
+      player2.getScore();
+
+    let player1Character = characters.find(
+      (character) => character.getAttribute("alt") === player1.getName()
+    );
+    player1Character.style.display = "";
+    infoBarPlayer1Img.appendChild(player1Character);
+
+    let player2Character = characters.find(
+      (character) => character.getAttribute("alt") === player2.getName()
+    );
+    player2Character.style.display = "";
+    infoBarPlayer2Img.appendChild(player2Character);
   };
 
   return {
-    setUpNewGame,
+    characters,
+    displayWelcomeMessage,
   };
 })();
 
-UIControl.setUpNewGame();
+UIControl.displayWelcomeMessage();
 
 // Make player1 and player2.   const player1 = Player("Mario"); etc.
 // GameControl.initializeNewRound();
