@@ -1,5 +1,6 @@
 const Board = (() => {
   let tokenCounter = 0;
+  let validTokenPlacement;
   let theBoard = [
     { id: "r1c1", content: null },
     { id: "r1c2", content: null },
@@ -17,6 +18,16 @@ const Board = (() => {
     for (let i = 0; i < 9; i++) {
       theBoard[i].content = null;
     }
+    updateTokensOnBoard();
+  };
+
+  const setValidTokenPlacement = (state) => {
+    if (state) validTokenPlacement = true;
+    else validTokenPlacement = false;
+  };
+
+  const getValidTokenPlacement = () => {
+    return validTokenPlacement;
   };
 
   const placeToken = (token, cellName) => {
@@ -24,9 +35,20 @@ const Board = (() => {
     if (theBoard[index].content === null) {
       theBoard[index].content = token;
       tokenCounter++;
-    } else console.log("You can't place a token there");
+      setValidTokenPlacement(true);
+      updateTokensOnBoard();
+    } else {
+      setValidTokenPlacement(false);
+    }
+
     if (tokenCounter >= 9) {
       GameControl.tieGame();
+    }
+  };
+
+  const updateTokensOnBoard = () => {
+    for (i = 0; i < UIControl.cellButtons.length; i++) {
+      UIControl.cellButtons[i].textContent = theBoard[i].content;
     }
   };
 
@@ -72,6 +94,9 @@ const Board = (() => {
   return {
     theBoard,
     tokenCounter,
+    setValidTokenPlacement,
+    getValidTokenPlacement,
+    updateTokensOnBoard,
     placeToken,
     resetBoard,
     placeToken,
@@ -134,85 +159,128 @@ const GameControl = (() => {
   let inactivePlayer;
   let player1Starts = true;
   let scoreToWin;
-  let roundsPlayed = 0;
+  let roundsPlayed = -1;
+  let gameIsOver = false;
+  let gameIsResetting = false;
 
-  const initializeNewRound = () => {
+  const getScoreToWin = () => {
+    return scoreToWin;
+  };
+
+  const setScoreToWin = (number) => {
+    scoreToWin = number;
+  };
+
+  const initializeFirstRound = (player1, player2) => {
+    UIControl.addEventsForCells();
+    UIControl.updatePlayerInfo();
     roundsPlayed++;
+    UIControl.roundsPlayedText.textContent = "Rounds played: " + roundsPlayed;
     Board.resetBoard();
-    Player.createdPlayers = 0;
     if (player1Starts === true) {
       setActivePlayer(player1);
     } else {
       setActivePlayer(player2);
     }
-    setInactivePlayer();
+    setInactivePlayer(player1, player2);
+  };
+
+  const startNewRound = () => {
+    UIControl.messageHeading.textContent = "Tic Tac Toe";
+    UIControl.updatePlayerInfo();
+    roundsPlayed++;
+    UIControl.roundsPlayedText.textContent = "Rounds played: " + roundsPlayed;
+    Board.resetBoard();
+    if (player1Starts === true) {
+      setActivePlayer(player1);
+    } else {
+      setActivePlayer(player2);
+    }
+    setInactivePlayer(player1, player2);
   };
 
   const setActivePlayer = (player) => {
     activePlayer = player;
+    UIControl.messageParagraph.textContent = activePlayer.getName() + "'s turn";
   };
 
-  const getActivePlayer = () => {
-    return activePlayer;
-  };
-
-  const setInactivePlayer = () => {
+  const setInactivePlayer = (player1, player2) => {
     if (activePlayer === player1) {
       inactivePlayer = player2;
     } else inactivePlayer = player1;
   };
 
-  const getInactivePlayer = () => {
-    return inactivePlayer;
-  };
-
-  const changeWhoStarts = () => {
-    if (activePlayer === player1) {
-      player1Starts = false;
-    } else player1Starts = true;
-  };
-
   const drawToken = (cellName) => {
+    if (gameIsResetting) return;
     Board.placeToken(activePlayer.getToken(), cellName);
     if (Board.checkBoardForWin()) {
       playerWon();
-    } else {
-      setActivePlayer(inactivePlayer);
-      setInactivePlayer();
-    }
+    } else if (Board.getValidTokenPlacement()) switchActiveInactivePlayer();
+  };
+
+  const switchActiveInactivePlayer = () => {
+    let active = activePlayer;
+    let inactive = inactivePlayer;
+    setActivePlayer(inactivePlayer);
+    setInactivePlayer(active, inactive);
   };
 
   const playerWon = () => {
-    changeWhoStarts();
     activePlayer.updateScore();
-    if (activePlayer.getScore() === scoreToWin) {
-      gameOver();
+    if (activePlayer.getScore().toString() === getScoreToWin()) {
+      return gameOver();
     } else {
-      console.log(activePlayer.getName(), " won this round");
-      initializeNewRound();
+      UIControl.messageHeading.textContent = activePlayer.getName() + " won this round";
+      UIControl.messageParagraph.textContent = "";
+      gameIsResetting = true;
+      setTimeout(() => {
+        gameIsResetting = false;
+        startNewRound();
+      }, 3000);
     }
+    if (!gameIsOver) switchActiveInactivePlayer();
   };
 
   const gameOver = () => {
-    console.log(activePlayer.getName(), " won the game over ", inactivePlayer.getName());
-    //Display winner and looser on website
-    //Function with a button to start again by making players first, reset score, then initialize
-    activePlayer.resetScore();
-    inactivePlayer.resetScore();
+    gameIsOver = true;
+    UIControl.messageHeading.textContent = activePlayer.getName() + " won!";
+    UIControl.messageParagraph.textContent = "";
+    while (UIControl.board.firstChild) {
+      UIControl.board.removeChild(UIControl.board.firstChild);
+    }
+    UIControl.infoBarArea.style.display = "none";
+    UIControl.board.classList += " winning-board";
+    UIControl.board.textContent = "CONGRATULATIONS!";
+    let characterWhoWon = UIControl.characters.find(
+      (character) => character.getAttribute("alt") === activePlayer.getName()
+    );
+    UIControl.board.appendChild(characterWhoWon);
+    newGameButton = document.createElement("button");
+    newGameButton.classList = "button new-game-button";
+    newGameButton.textContent = "NEW GAME";
+    UIControl.messageParagraph.appendChild(newGameButton);
+    newGameButton.addEventListener("click", () => {
+      location.reload();
+    });
   };
 
   const tieGame = () => {
-    console.log("Round tied");
-    //Display tie game message, then initialize
-    initializeNewRound();
+    UIControl.messageHeading.textContent = "Game tied!";
+    Board.updateTokensOnBoard();
+    gameIsResetting = true;
+    setTimeout(() => {
+      gameIsResetting = false;
+      startNewRound();
+    }, 3000);
   };
 
   return {
-    scoreToWin,
     roundsPlayed,
-    initializeNewRound,
-    getActivePlayer,
-    getInactivePlayer,
+    activePlayer,
+    inactivePlayer,
+    getScoreToWin,
+    setScoreToWin,
+    initializeFirstRound,
     drawToken,
     playerWon,
     gameOver,
@@ -254,7 +322,6 @@ const UIControl = (() => {
   const infoBarPlayer2Img = document.querySelector(".info-bar-player2-img");
   const player2Img = document.querySelector("#player2-img");
   const colorButton = document.querySelector(".color-theme-change-button");
-  const restartButton = document.querySelector("#restart-button");
   const marioImg = document.createElement("img");
   const luigiImg = document.createElement("img");
   const peachImg = document.createElement("img");
@@ -271,9 +338,8 @@ const UIControl = (() => {
     infoBarArea.style.display = "none";
     gameTypeButtonArea.style.display = "none";
     playButton.style.display = "none";
-    restartButton.style.display = "none";
-    messageHeading.textContent = "WELCOME!";
-    messageParagraph.textContent = "Tic Tac Toe";
+    messageHeading.textContent = "Tic Tac Toe";
+    messageParagraph.textContent = "Welcome!";
     infoBarHeading.textContent = "New Game";
     infoBarParagraph.textContent = "Select your player";
     scoreGoalText.textContent = "Player1: ";
@@ -355,13 +421,13 @@ const UIControl = (() => {
 
   const chooseGameType = () => {
     gameTypeButtonArea.style.display = "";
-    messageHeading.textContent = "";
-    messageParagraph.textContent = "Choose game type ";
+    messageHeading.textContent = "Choose Game Type";
+    messageParagraph.textContent = "";
     infoBarHeading.textContent = "Players:";
     infoBarParagraph.textContent = "";
     gameTypeButtons.forEach((button) => {
       button.addEventListener("click", (e) => {
-        GameControl.scoreToWin = e.target.getAttribute("data-number");
+        GameControl.setScoreToWin(e.target.getAttribute("data-number"));
         gameTypeButtonArea.style.display = "none";
         displayPlayButton();
       });
@@ -369,7 +435,7 @@ const UIControl = (() => {
   };
 
   const displayPlayButton = () => {
-    messageParagraph.textContent = "Ready to play?";
+    messageHeading.textContent = "Ready to play?";
     playButton.style.display = "";
     playButton.addEventListener("click", () => {
       setUpGame();
@@ -379,12 +445,28 @@ const UIControl = (() => {
   const setUpGame = () => {
     playButton.style.display = "none";
     board.style.display = "";
-    messageParagraph.textContent = "Tic Tac Toe";
-    restartButton.style.display = "none";
+    messageHeading.textContent = "Tic Tac Toe";
     infoBarHeading.textContent = "Game in progress";
-    scoreGoalText.textContent = "First to: " + GameControl.scoreToWin + " points";
+    scoreGoalText.textContent = "First to: " + GameControl.getScoreToWin() + " points";
     roundsPlayedText.textContent = "Rounds played: " + GameControl.roundsPlayed;
     infoBarPlayer1Heading.textContent = "Player1";
+    updatePlayerInfo();
+
+    let player1Character = characters.find(
+      (character) => character.getAttribute("alt") === player1.getName()
+    );
+    player1Character.style.display = "";
+    infoBarPlayer1Img.appendChild(player1Character);
+
+    let player2Character = characters.find(
+      (character) => character.getAttribute("alt") === player2.getName()
+    );
+    player2Character.style.display = "";
+    infoBarPlayer2Img.appendChild(player2Character);
+    GameControl.initializeFirstRound(player1, player2);
+  };
+
+  const updatePlayerInfo = () => {
     infoBarPlayer1Info.innerHTML =
       "Name: " +
       player1.getName() +
@@ -400,28 +482,30 @@ const UIControl = (() => {
       player2.getToken() +
       "<br>Score: " +
       player2.getScore();
+  };
 
-    let player1Character = characters.find(
-      (character) => character.getAttribute("alt") === player1.getName()
-    );
-    player1Character.style.display = "";
-    infoBarPlayer1Img.appendChild(player1Character);
-
-    let player2Character = characters.find(
-      (character) => character.getAttribute("alt") === player2.getName()
-    );
-    player2Character.style.display = "";
-    infoBarPlayer2Img.appendChild(player2Character);
+  const addEventsForCells = () => {
+    const cellNames = ["r1c1", "r1c2", "r1c3", "r2c1", "r2c2", "r2c3", "r3c1", "r3c2", "r3c3"];
+    for (i = 0; i < cellNames.length; i++) {
+      cellButtons[i].addEventListener("click", GameControl.drawToken.bind(null, cellNames[i]));
+    }
   };
 
   return {
     characters,
+    player1,
+    player2,
+    cellButtons,
+    roundsPlayedText,
+    messageHeading,
+    messageParagraph,
+    board,
+    infoBarArea,
+    playButton,
+    updatePlayerInfo,
+    addEventsForCells,
     displayWelcomeMessage,
   };
 })();
 
 UIControl.displayWelcomeMessage();
-
-// Make player1 and player2.   const player1 = Player("Mario"); etc.
-// GameControl.initializeNewRound();
-// GameControl.drawToken("r1c1");

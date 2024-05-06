@@ -39,3 +39,8 @@
 .button:hover {
   background-color: var(--mario-theme-orange);
 }
+
+.winning-board {
+  border: 25px double var(--mario-theme-orange);
+  box-shadow: 0px 0px 200px var(--mario-theme-white);
+}
