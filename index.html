@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tic Tac Toe Game</title>
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="styleMarioTheme.css" />
+    <link rel="stylesheet" href="styleMarioTheme.css" id="mario-theme-stylesheet" />
     <script src="script.js" defer></script>
   </head>
   <body>
     <div class="content">
       <button class="button" id="music-button">Music ON/OFF</button>
       <button class="button" id="mario-theme-button">Mario theme ON/OFF</button>
+      <button class="color-theme-change-button button">Change colors</button>
+      <div id="tooltip" class="tooltip">To use: Toggle Mario Theme OFF</div>
       <div class="message-area">
         <div class="message-heading"></div>
         <div class="message-paragraph"></div>
@@ -53,9 +55,6 @@
           <div class="info-bar-player2-info player-info"></div>
         </div>
         <div class="info-bar-player2-img player-img"></div>
-        <div class="info-bar-button-area">
-          <button class="color-theme-change-button button">Change colors</button>
-        </div>
       </div>
     </div>
   </body>

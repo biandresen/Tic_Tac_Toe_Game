@@ -293,6 +293,7 @@ const UIControl = (() => {
   const board = document.querySelector(".board-area");
   const musicButton = document.querySelector("#music-button");
   const marioThemeButton = document.querySelector("#mario-theme-button");
+  const tooltip = document.querySelector(".tooltip");
   const messageArea = document.querySelector(".message-area");
   const messageHeading = document.querySelector(".message-heading");
   const messageParagraph = document.querySelector(".message-paragraph");
@@ -332,6 +333,24 @@ const UIControl = (() => {
   let player1;
   let player2;
   const characters = [marioImg, luigiImg, peachImg, bowserImg];
+
+  colorButton.addEventListener("click", changeThemeColor);
+  marioThemeButton.addEventListener("click", marioThemeToggle);
+
+  function changeThemeColor() {
+    const marioThemeIsDisabled = document.getElementById("mario-theme-stylesheet").disabled;
+    if (marioThemeIsDisabled === false) return (tooltip.style.display = "block");
+
+    const hue = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--hue"));
+    document.documentElement.style.setProperty("--hue", hue + 100);
+    if (hue === 1700) document.documentElement.style.setProperty("--hue", 0);
+  }
+
+  function marioThemeToggle() {
+    const marioThemeStylesheet = document.getElementById("mario-theme-stylesheet");
+    marioThemeStylesheet.toggleAttribute("disabled");
+    tooltip.style.display = "none";
+  }
 
   const displayWelcomeMessage = () => {
     board.style.display = "none";
@@ -423,7 +442,7 @@ const UIControl = (() => {
     gameTypeButtonArea.style.display = "";
     messageHeading.textContent = "Choose Game Type";
     messageParagraph.textContent = "";
-    infoBarHeading.textContent = "Players:";
+    infoBarHeading.textContent = "Players";
     infoBarParagraph.textContent = "";
     gameTypeButtons.forEach((button) => {
       button.addEventListener("click", (e) => {

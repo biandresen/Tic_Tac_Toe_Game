@@ -3,9 +3,9 @@
 Project: Tic TacToe Game, from The Odin Project (Intermediate JavaScript module)
 
 To-do:
-\*Add feature: game working with UI
+<!--Add feature: game working with UI
 -Remove event listeners from images after game has started
--Basic game function like placing token
+-Basic game function like placing token -->
 
 <!-- -Character selection -->
 
