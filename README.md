@@ -9,7 +9,7 @@ To-do:
 
 <!-- -Character selection -->
 
--Update and display images, text/numbers on UI
+<!-- -Update and display images, text/numbers on UI -->
 
 \*Add feature: game music
 -theme music

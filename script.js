@@ -35,6 +35,7 @@ const Board = (() => {
     if (theBoard[index].content === null) {
       theBoard[index].content = token;
       tokenCounter++;
+      UIControl.playAudio("tokenSound");
       setValidTokenPlacement(true);
       updateTokensOnBoard();
     } else {
@@ -230,6 +231,7 @@ const GameControl = (() => {
     if (activePlayer.getScore().toString() === getScoreToWin()) {
       return gameOver();
     } else {
+      UIControl.playAudio("winSound");
       UIControl.messageHeading.textContent = activePlayer.getName() + " won this round";
       UIControl.messageParagraph.textContent = "";
       gameIsResetting = true;
@@ -243,6 +245,8 @@ const GameControl = (() => {
 
   const gameOver = () => {
     gameIsOver = true;
+    UIControl.stopAudio("marioThemeSong");
+    UIControl.playAudio("victorySound");
     UIControl.messageHeading.textContent = activePlayer.getName() + " won!";
     UIControl.messageParagraph.textContent = "";
     while (UIControl.board.firstChild) {
@@ -265,6 +269,7 @@ const GameControl = (() => {
   };
 
   const tieGame = () => {
+    UIControl.playAudio("tieSound");
     UIControl.messageHeading.textContent = "Game tied!";
     Board.updateTokensOnBoard();
     gameIsResetting = true;
@@ -291,25 +296,19 @@ const GameControl = (() => {
 const UIControl = (() => {
   //#region DOM-queries
   const board = document.querySelector(".board-area");
-  const musicButton = document.querySelector("#music-button");
   const marioThemeButton = document.querySelector("#mario-theme-button");
   const tooltip = document.querySelector(".tooltip");
-  const messageArea = document.querySelector(".message-area");
   const messageHeading = document.querySelector(".message-heading");
   const messageParagraph = document.querySelector(".message-paragraph");
-  const messageButtonsArea = document.querySelector(".message-buttons-area");
   const cellButtons = document.querySelectorAll(".board-button");
-  const battlingCharacters = document.querySelector(".battling-characters");
   const gameTypeButtonArea = document.querySelector(".game-type-button-area");
   const gameTypeButtons = document.querySelectorAll(".game-type-button");
   const selectPlayerButton = document.querySelector("#select-player-button");
   const playButton = document.querySelector("#play-button");
   const infoBarArea = document.querySelector(".info-bar-area");
   const infoBarHeading = document.querySelector(".info-bar-heading");
-  const infoBarParagraphArea = document.querySelector(".info-bar-paragraph-area");
   const infoBarParagraph = document.querySelector(".info-bar-paragraph");
   const scoreGoalText = document.querySelector(".score-goal-text");
-  const scoreGoalNumber = document.querySelector(".score-goal-number");
   const roundsPlayedText = document.querySelector(".rounds-played-text");
   const roundsPlayedNumber = document.querySelector(".rounds-played-number");
   const infoBarPlayer1Area = document.querySelector(".info-bar-player1-area");
@@ -352,6 +351,22 @@ const UIControl = (() => {
     tooltip.style.display = "none";
   }
 
+  const playAudio = (audioId) => {
+    const audio = document.getElementById(audioId);
+    audio.play();
+    if (audioId === "Mario") audio.volume = 0.4;
+    if (audioId === "selectPlayerSound") audio.volume = 0.6;
+    if (audioId === "marioThemeSong") audio.volume = 0.4;
+    if (audioId === "tokenSound") audio.volume = 0.5;
+    if (audioId === "winSound") audio.volume = 0.5;
+    if (audioId === "tieSound") audio.volume = 0.6;
+  };
+
+  const stopAudio = (audioId) => {
+    const audio = document.getElementById(audioId);
+    audio.pause();
+  };
+
   const displayWelcomeMessage = () => {
     board.style.display = "none";
     infoBarArea.style.display = "none";
@@ -381,6 +396,8 @@ const UIControl = (() => {
     infoBarPlayer2Img.appendChild(bowserImg);
 
     selectPlayerButton.addEventListener("click", () => {
+      playAudio("selectYourPlayerSound");
+      playAudio("selectPlayerSound");
       selectYourPlayer();
     });
   };
@@ -407,6 +424,7 @@ const UIControl = (() => {
   };
 
   function handleCharacterClickEvent(name) {
+    playAudio(name);
     playerSelected(name);
   }
 
@@ -457,6 +475,8 @@ const UIControl = (() => {
     messageHeading.textContent = "Ready to play?";
     playButton.style.display = "";
     playButton.addEventListener("click", () => {
+      stopAudio("selectPlayerSound");
+      playAudio("marioThemeSong");
       setUpGame();
     });
   };
@@ -521,6 +541,8 @@ const UIControl = (() => {
     board,
     infoBarArea,
     playButton,
+    playAudio,
+    stopAudio,
     updatePlayerInfo,
     addEventsForCells,
     displayWelcomeMessage,

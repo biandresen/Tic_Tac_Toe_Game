@@ -272,19 +272,10 @@
   transition: ease-in-out 0.2s;
 }
 
-#music-button {
-  grid-column: 1 / 2;
-  grid-row: 1 / 2;
-  margin: 2vh;
-  font-size: 1.5rem;
-  justify-self: start;
-  align-self: start;
-}
-
 #mario-theme-button {
   grid-column: 1 / 2;
   grid-row: 1 / 2;
-  margin: 8.5vh 2vh 2vh 2vh;
+  margin: 2vh 2vh 2vh 2vh;
   font-size: 1.5rem;
   justify-self: start;
   align-self: start;
@@ -293,7 +284,7 @@
 .color-theme-change-button {
   grid-column: 1 / 2;
   grid-row: 1 / 2;
-  margin: 15vh 2vh 2vh 2vh;
+  margin: 9vh 2vh 2vh 2vh;
   font-size: 1.5rem;
   justify-self: start;
   align-self: start;
@@ -327,6 +318,6 @@
   padding: 5px;
   border-radius: 5px;
   display: none;
-  top: 190px;
+  top: 135px;
   left: 20px;
 }
