@@ -50,7 +50,6 @@ const Board = (() => {
     } else setValidTokenPlacement(false);
 
     if (tokenCounter >= 9) {
-      alert("tiedGame = true");
       setTiedGame(true);
     }
   };
@@ -205,7 +204,6 @@ const GameControl = (() => {
     if (Board.checkBoardForWin() && !Board.getTiedGame()) {
       playerWon();
     } else if (Board.getTiedGame()) {
-      alert("tied game");
       GameControl.tieGame();
     } else if (Board.getValidTokenPlacement()) switchActiveInactivePlayer();
   };
