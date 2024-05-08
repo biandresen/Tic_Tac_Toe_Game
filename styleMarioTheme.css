@@ -63,3 +63,32 @@
   background-color: var(--mario-theme-dark-green);
   box-shadow: 0px 0px 20px var(--mario-theme-white);
 }
+
+@media screen and (max-width: 860px) {
+  .info-bar-paragraph-area {
+    grid-column: 3 / 5;
+    grid-row: 2 / 3;
+    margin-top: 10px;
+    padding: 0 1px 1px 1px;
+    font-size: 1rem;
+    justify-self: start;
+    position: relative;
+    right: 30px;
+    overflow: visible;
+    font-weight: 600;
+    border: none;
+    box-shadow: none;
+  }
+
+  .score-board {
+    display: none;
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+    width: 90%;
+    height: 10%;
+    font-size: 120%;
+    align-self: end;
+    margin: 0 auto;
+    padding: 30px;
+  }
+}
