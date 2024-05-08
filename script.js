@@ -1,7 +1,7 @@
 const Board = (() => {
   let tokenCounter = 0;
-  let tiedGame = false;
   let validTokenPlacement;
+  let tiedGame;
   let theBoard = [
     { id: "r1c1", content: null },
     { id: "r1c2", content: null },
@@ -13,6 +13,14 @@ const Board = (() => {
     { id: "r3c2", content: null },
     { id: "r3c3", content: null },
   ];
+
+  const setTiedGame = (status) => {
+    tiedGame = status;
+  };
+
+  const getTiedGame = () => {
+    return tiedGame;
+  };
 
   const resetBoard = () => {
     tokenCounter = 0;
@@ -42,7 +50,8 @@ const Board = (() => {
     } else setValidTokenPlacement(false);
 
     if (tokenCounter >= 9) {
-      tiedGame = true;
+      alert("tiedGame = true");
+      setTiedGame(true);
     }
   };
 
@@ -94,7 +103,8 @@ const Board = (() => {
   return {
     theBoard,
     tokenCounter,
-    tiedGame,
+    setTiedGame,
+    getTiedGame,
     setValidTokenPlacement,
     getValidTokenPlacement,
     updateTokensOnBoard,
@@ -192,10 +202,12 @@ const GameControl = (() => {
   const drawToken = (cellName) => {
     if (gameIsResetting) return;
     Board.placeToken(activePlayer.getToken(), cellName);
-    if (Board.checkBoardForWin() && Board.tiedGame === false) {
+    if (Board.checkBoardForWin() && !Board.getTiedGame()) {
       playerWon();
-    } else if (Board.tiedGame) GameControl.tieGame();
-    else if (Board.getValidTokenPlacement()) switchActiveInactivePlayer();
+    } else if (Board.getTiedGame()) {
+      alert("tied game");
+      GameControl.tieGame();
+    } else if (Board.getValidTokenPlacement()) switchActiveInactivePlayer();
   };
 
   const switchActiveInactivePlayer = () => {
@@ -237,7 +249,8 @@ const GameControl = (() => {
     UIControl.infoBarArea.style.display = "none";
     UIControl.board.classList += " winning-board";
     UIControl.board.textContent = "CONGRATULATIONS!";
-
+    UIControl.scoreBoard.style.display = "block";
+    UIControl.scoreBoard.innerHTML = `${activePlayer.getName()}'s score: ${activePlayer.getScore()}<br>${inactivePlayer.getName()}'s score: ${inactivePlayer.getScore()}`;
     //Find the image of the character who won
     const characterWhoWon = UIControl.characters.find(
       (character) => character.getAttribute("alt") === activePlayer.getName()
@@ -261,6 +274,7 @@ const GameControl = (() => {
     gameIsResetting = true;
     setTimeout(() => {
       gameIsResetting = false;
+      Board.setTiedGame(false);
       startNewRound();
     }, 3000);
   };
@@ -283,6 +297,7 @@ const GameControl = (() => {
 const UIControl = (() => {
   //#region DOM-queries
   const board = document.querySelector(".board-area");
+  const scoreBoard = document.querySelector(".score-board");
   const marioThemeButton = document.querySelector("#mario-theme-button");
   const tooltip = document.querySelector(".tooltip");
   const messageHeading = document.querySelector(".message-heading");
@@ -528,6 +543,7 @@ const UIControl = (() => {
     messageParagraph,
     board,
     infoBarArea,
+    scoreBoard,
     playButton,
     playAudio,
     stopAudio,

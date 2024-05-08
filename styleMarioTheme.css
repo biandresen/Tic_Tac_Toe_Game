@@ -10,9 +10,14 @@
   background-color: var(--mario-theme-blue);
 }
 
+.message-area {
+  border: 8px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0px 0px 20px var(--mario-theme-white);
+}
+
 .board-area {
   background-color: var(--mario-theme-brown);
-  box-shadow: 0px 0px 40px var(--mario-theme-white);
+  box-shadow: 0px 0px 20px var(--mario-theme-white);
 }
 
 .board-button {
@@ -26,7 +31,7 @@
 
 .info-bar-area {
   background-color: var(--mario-theme-dark-green);
-  box-shadow: 0px 0px 40px var(--mario-theme-white);
+  box-shadow: 0px 0px 20px var(--mario-theme-white);
   border: 8px solid var(--mario-theme-light-green);
 }
 
@@ -47,5 +52,14 @@
 
 .winning-board {
   border: 25px double var(--mario-theme-orange);
-  box-shadow: 0px 0px 200px var(--mario-theme-white);
+  box-shadow: 0px 0px 20px var(--mario-theme-white);
+}
+
+.score-board {
+  grid-column: 3 / 4;
+  grid-row: 1 / 2;
+  border: 25px double var(--mario-theme-light-green);
+  border-radius: 8px;
+  background-color: var(--mario-theme-dark-green);
+  box-shadow: 0px 0px 20px var(--mario-theme-white);
 }
