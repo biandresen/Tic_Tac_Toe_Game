@@ -1,5 +1,6 @@
 const Board = (() => {
   let tokenCounter = 0;
+  let tiedGame = false;
   let validTokenPlacement;
   let theBoard = [
     { id: "r1c1", content: null },
@@ -38,18 +39,16 @@ const Board = (() => {
       UIControl.playAudio("tokenSound");
       setValidTokenPlacement(true);
       updateTokensOnBoard();
-    } else {
-      setValidTokenPlacement(false);
-    }
+    } else setValidTokenPlacement(false);
 
     if (tokenCounter >= 9) {
-      GameControl.tieGame();
+      tiedGame = true;
     }
   };
 
   const updateTokensOnBoard = () => {
-    for (i = 0; i < UIControl.cellButtons.length; i++) {
-      UIControl.cellButtons[i].textContent = theBoard[i].content;
+    for (i = 0; i < UIControl.boardButtons.length; i++) {
+      UIControl.boardButtons[i].textContent = theBoard[i].content;
     }
   };
 
@@ -95,19 +94,19 @@ const Board = (() => {
   return {
     theBoard,
     tokenCounter,
+    tiedGame,
     setValidTokenPlacement,
     getValidTokenPlacement,
     updateTokensOnBoard,
     placeToken,
     resetBoard,
-    placeToken,
     checkBoardForWin,
   };
 })();
 
 const Player = (function () {
   let createdPlayers = 0;
-
+  //Construct player objects (player1 and player2)
   return function (name) {
     name;
     let token;
@@ -135,22 +134,12 @@ const Player = (function () {
       score++;
     };
 
-    const resetScore = () => {
-      score = 0;
-    };
-
-    const playerWins = () => {
-      token++;
-    };
-
     return {
       createdPlayers,
       getName,
       getToken,
       getScore,
       updateScore,
-      resetScore,
-      playerWins,
     };
   };
 })();
@@ -172,26 +161,15 @@ const GameControl = (() => {
     scoreToWin = number;
   };
 
-  const initializeFirstRound = (player1, player2) => {
-    UIControl.addEventsForCells();
-    UIControl.updatePlayerInfo();
-    roundsPlayed++;
-    UIControl.roundsPlayedText.textContent = "Rounds played: " + roundsPlayed;
-    Board.resetBoard();
-    if (player1Starts === true) {
-      setActivePlayer(player1);
-    } else {
-      setActivePlayer(player2);
-    }
-    setInactivePlayer(player1, player2);
-  };
-
   const startNewRound = () => {
     UIControl.messageHeading.textContent = "Tic Tac Toe";
     UIControl.updatePlayerInfo();
     roundsPlayed++;
     UIControl.roundsPlayedText.textContent = "Rounds played: " + roundsPlayed;
     Board.resetBoard();
+  };
+
+  const setPlayerStatus = (player1, player2) => {
     if (player1Starts === true) {
       setActivePlayer(player1);
     } else {
@@ -214,9 +192,10 @@ const GameControl = (() => {
   const drawToken = (cellName) => {
     if (gameIsResetting) return;
     Board.placeToken(activePlayer.getToken(), cellName);
-    if (Board.checkBoardForWin()) {
+    if (Board.checkBoardForWin() && Board.tiedGame === false) {
       playerWon();
-    } else if (Board.getValidTokenPlacement()) switchActiveInactivePlayer();
+    } else if (Board.tiedGame) GameControl.tieGame();
+    else if (Board.getValidTokenPlacement()) switchActiveInactivePlayer();
   };
 
   const switchActiveInactivePlayer = () => {
@@ -249,20 +228,27 @@ const GameControl = (() => {
     UIControl.playAudio("victorySound");
     UIControl.messageHeading.textContent = activePlayer.getName() + " won!";
     UIControl.messageParagraph.textContent = "";
+
+    //Delete buttons on the board in order to display the winner
     while (UIControl.board.firstChild) {
       UIControl.board.removeChild(UIControl.board.firstChild);
     }
+
     UIControl.infoBarArea.style.display = "none";
     UIControl.board.classList += " winning-board";
     UIControl.board.textContent = "CONGRATULATIONS!";
-    let characterWhoWon = UIControl.characters.find(
+
+    //Find the image of the character who won
+    const characterWhoWon = UIControl.characters.find(
       (character) => character.getAttribute("alt") === activePlayer.getName()
     );
+
     UIControl.board.appendChild(characterWhoWon);
     newGameButton = document.createElement("button");
     newGameButton.classList = "button new-game-button";
     newGameButton.textContent = "NEW GAME";
     UIControl.messageParagraph.appendChild(newGameButton);
+
     newGameButton.addEventListener("click", () => {
       location.reload();
     });
@@ -285,7 +271,8 @@ const GameControl = (() => {
     inactivePlayer,
     getScoreToWin,
     setScoreToWin,
-    initializeFirstRound,
+    setPlayerStatus,
+    startNewRound,
     drawToken,
     playerWon,
     gameOver,
@@ -300,7 +287,7 @@ const UIControl = (() => {
   const tooltip = document.querySelector(".tooltip");
   const messageHeading = document.querySelector(".message-heading");
   const messageParagraph = document.querySelector(".message-paragraph");
-  const cellButtons = document.querySelectorAll(".board-button");
+  const boardButtons = document.querySelectorAll(".board-button");
   const gameTypeButtonArea = document.querySelector(".game-type-button-area");
   const gameTypeButtons = document.querySelectorAll(".game-type-button");
   const selectPlayerButton = document.querySelector("#select-player-button");
@@ -310,17 +297,12 @@ const UIControl = (() => {
   const infoBarParagraph = document.querySelector(".info-bar-paragraph");
   const scoreGoalText = document.querySelector(".score-goal-text");
   const roundsPlayedText = document.querySelector(".rounds-played-text");
-  const roundsPlayedNumber = document.querySelector(".rounds-played-number");
-  const infoBarPlayer1Area = document.querySelector(".info-bar-player1-area");
   const infoBarPlayer1Heading = document.querySelector(".info-bar-player1-heading");
   const infoBarPlayer1Info = document.querySelector(".info-bar-player1-info");
   const infoBarPlayer1Img = document.querySelector(".info-bar-player1-img");
-  const player1Img = document.querySelector("#player1-img");
-  const infoBarPlayer2Area = document.querySelector(".info-bar-player2-area");
   const infoBarPlayer2Heading = document.querySelector(".info-bar-player2-heading");
   const infoBarPlayer2Info = document.querySelector(".info-bar-player2-info");
   const infoBarPlayer2Img = document.querySelector(".info-bar-player2-img");
-  const player2Img = document.querySelector("#player2-img");
   const colorButton = document.querySelector(".color-theme-change-button");
   const marioImg = document.createElement("img");
   const luigiImg = document.createElement("img");
@@ -430,10 +412,12 @@ const UIControl = (() => {
 
   const playerSelected = (chosenCharacter) => {
     if (player1Chosen === false) {
+      //Create player1
       player1 = Player(chosenCharacter);
       scoreGoalText.textContent += player1.getName();
       removeSelectedCharacter(chosenCharacter);
     } else if (player1Chosen === true) {
+      //Create player2
       player2 = Player(chosenCharacter);
       roundsPlayedText.textContent += player2.getName();
       removeCharacters();
@@ -462,6 +446,7 @@ const UIControl = (() => {
     messageParagraph.textContent = "";
     infoBarHeading.textContent = "Players";
     infoBarParagraph.textContent = "";
+
     gameTypeButtons.forEach((button) => {
       button.addEventListener("click", (e) => {
         GameControl.setScoreToWin(e.target.getAttribute("data-number"));
@@ -502,7 +487,10 @@ const UIControl = (() => {
     );
     player2Character.style.display = "";
     infoBarPlayer2Img.appendChild(player2Character);
-    GameControl.initializeFirstRound(player1, player2);
+
+    UIControl.addEventsForCells();
+    GameControl.setPlayerStatus(player1, player2);
+    GameControl.startNewRound();
   };
 
   const updatePlayerInfo = () => {
@@ -526,7 +514,7 @@ const UIControl = (() => {
   const addEventsForCells = () => {
     const cellNames = ["r1c1", "r1c2", "r1c3", "r2c1", "r2c2", "r2c3", "r3c1", "r3c2", "r3c3"];
     for (i = 0; i < cellNames.length; i++) {
-      cellButtons[i].addEventListener("click", GameControl.drawToken.bind(null, cellNames[i]));
+      boardButtons[i].addEventListener("click", GameControl.drawToken.bind(null, cellNames[i]));
     }
   };
 
@@ -534,7 +522,7 @@ const UIControl = (() => {
     characters,
     player1,
     player2,
-    cellButtons,
+    boardButtons,
     roundsPlayedText,
     messageHeading,
     messageParagraph,
