@@ -348,7 +348,8 @@
     grid-template-columns: 100%;
     grid-template-rows: 1fr 3.5fr 1fr;
     gap: 10px;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: scroll;
   }
   .message-area {
     grid-column: 1 / 2;
